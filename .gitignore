@@ -1,0 +1,25 @@
+# Environnements virtuels (TRÈS IMPORTANT)
+venv/
+.venv/
+env/
+backend/venv/
+
+# Bibliothèques Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Dossier React
+frontend/node_modules/
+frontend/build/
+
+# Fichiers de données et modèles lourds
+*.pth
+*.h5
+backend/models/*.pth
+backend/static/uploads/*
+backend/static/results/*
+
+# Divers
+.DS_Store
+.env
