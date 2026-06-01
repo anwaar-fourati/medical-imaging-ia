@@ -1,0 +1,222 @@
+/* ============================================
+   HISTORIQUE.CSS — Historique des analyses
+   ============================================ */
+
+.historique-page { padding: 0; }
+
+/* ─── Header ──────────────────────────────── */
+.hist-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.hist-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: -0.02em;
+  margin: 0 0 3px;
+}
+
+.hist-subtitle {
+  font-size: 0.79rem;
+  color: var(--text-muted);
+}
+
+/* ─── Search ──────────────────────────────── */
+.hist-search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.hist-search-icon {
+  position: absolute;
+  left: 13px;
+  pointer-events: none;
+}
+
+.hist-search-input {
+  width: 100%;
+  padding: 10px 38px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  color: var(--text-light);
+  font-size: 0.88rem;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.hist-search-input:focus { border-color: rgba(59,130,246,0.45); }
+
+.hist-search-clear {
+  position: absolute;
+  right: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border-light);
+  border-radius: 5px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 3px;
+}
+
+/* ─── Loading / Empty ─────────────────────── */
+.hist-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 4rem;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.hist-spin { animation: spin 1s linear infinite; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.hist-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 5rem 2rem;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  text-align: center;
+}
+
+/* ─── Table ───────────────────────────────── */
+.hist-table-wrapper {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.hist-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.hist-table thead tr {
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.hist-table th {
+  padding: 10px 14px;
+  font-size: 0.69rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.hist-table td {
+  padding: 11px 14px;
+  font-size: 0.85rem;
+  vertical-align: middle;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.hist-row:last-child td { border-bottom: none; }
+.hist-row:hover td { background: rgba(255,255,255,0.025); }
+
+/* ─── Cells ───────────────────────────────── */
+.hist-patient-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hist-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.hist-name {
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.hist-cin {
+  font-family: monospace;
+  font-size: 0.82rem;
+  color: #93c5fd;
+  background: rgba(59,130,246,0.1);
+  padding: 2px 7px;
+  border-radius: 5px;
+}
+
+.hist-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.hist-conf {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.hist-dim {
+  color: var(--text-muted);
+  font-size: 0.83rem;
+}
+
+.hist-date {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.hist-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  background: rgba(59,130,246,0.12);
+  border: 1px solid rgba(59,130,246,0.25);
+  border-radius: 7px;
+  color: #93c5fd;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.hist-view-btn:hover { opacity: 0.8; }
+
+/* ─── Responsive ──────────────────────────── */
+@media (max-width: 800px) {
+  .hist-table th:nth-child(n+5),
+  .hist-table td:nth-child(n+5) { display: none; }
+}

@@ -1,0 +1,513 @@
+/* ============================================
+   PATIENTS.CSS — Gestion des patients
+   ============================================ */
+
+/* ─── Page ────────────────────────────────── */
+.patients-page {
+  padding: 0;
+}
+
+/* ─── Header ──────────────────────────────── */
+.pts-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.pts-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: -0.02em;
+  margin: 0 0 3px;
+}
+
+.pts-subtitle {
+  font-size: 0.79rem;
+  color: var(--text-muted);
+}
+
+.pts-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  border: none;
+  border-radius: 9px;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.28);
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+
+.pts-add-btn:hover { opacity: 0.9; }
+
+/* ─── Search bar ──────────────────────────── */
+.pts-search-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.pts-search-icon {
+  position: absolute;
+  left: 13px;
+  pointer-events: none;
+}
+
+.pts-search-input {
+  width: 100%;
+  padding: 10px 38px 10px 38px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  color: var(--text-light);
+  font-size: 0.88rem;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.pts-search-input:focus {
+  border-color: rgba(59, 130, 246, 0.45);
+}
+
+.pts-search-clear {
+  position: absolute;
+  right: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border-light);
+  border-radius: 5px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+}
+
+/* ─── Table wrapper ───────────────────────── */
+.pts-table-wrapper {
+  background: var(--card-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 14px;
+  overflow: hidden;
+  min-height: 200px;
+}
+
+/* ─── Loading / Empty ─────────────────────── */
+.pts-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 4rem;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.pts-loading-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.pts-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 5rem 2rem;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  text-align: center;
+}
+
+/* ─── Table ───────────────────────────────── */
+.pts-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.pts-table thead tr {
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border-light);
+}
+
+.pts-table th {
+  padding: 10px 14px;
+  font-size: 0.69rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.pts-table td {
+  padding: 11px 14px;
+  font-size: 0.85rem;
+  vertical-align: middle;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.pts-row:last-child td { border-bottom: none; }
+
+.pts-row:hover td { background: rgba(255,255,255,0.025); }
+
+/* ─── Cells ───────────────────────────────── */
+.pts-patient-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pts-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.pts-name {
+  font-weight: 600;
+  color: var(--text-light);
+  font-size: 0.88rem;
+}
+
+.pts-cin {
+  font-family: monospace;
+  font-size: 0.82rem;
+  color: #93c5fd;
+  background: rgba(59,130,246,0.1);
+  padding: 2px 7px;
+  border-radius: 5px;
+}
+
+.pts-dim {
+  color: var(--text-muted);
+  font-size: 0.83rem;
+}
+
+.pts-col-actions { width: 80px; }
+
+/* ─── Action buttons ──────────────────────── */
+.pts-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.pts-btn-edit,
+.pts-btn-delete {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.15s;
+}
+
+.pts-btn-edit {
+  background: rgba(59, 130, 246, 0.14);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.pts-btn-edit:hover { opacity: 0.8; }
+
+.pts-btn-delete {
+  background: rgba(248, 113, 113, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.22);
+}
+
+.pts-btn-delete:hover { opacity: 0.8; }
+
+/* ============================================
+   MODAL OVERLAY & BASE
+   ============================================ */
+.pm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(2, 8, 23, 0.88);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.pm-modal {
+  background: #0f1f3d;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 18px;
+  width: 100%;
+  max-width: 560px;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.7);
+  overflow: hidden;
+}
+
+.pm-modal-sm { max-width: 400px; }
+
+/* ─── Modal Header ────────────────────────── */
+.pm-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1.4rem 1.5rem 1.1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.pm-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pm-header-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(59,130,246,0.14);
+  border: 1px solid rgba(59,130,246,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pm-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin: 0 0 2px;
+}
+
+.pm-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.pm-close {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border-light);
+  border-radius: 7px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* ─── Modal Body ──────────────────────────── */
+.pm-body {
+  padding: 1.4rem 1.5rem;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.pm-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ─── Form fields inside modal ────────────── */
+.pf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1 1 100%;
+}
+
+.pf-field.half {
+  flex: 1 1 calc(50% - 6px);
+  min-width: 160px;
+}
+
+.pf-label {
+  font-size: 0.71rem;
+  font-weight: 600;
+  color: #7a93b8;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.pf-required { color: #f87171; margin-left: 3px; }
+
+.pf-input {
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-light);
+  color: var(--text-light);
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: 'DM Sans', sans-serif;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.pf-input:focus { border-color: rgba(59,130,246,0.5); }
+.pf-input-error { border-color: rgba(248,113,113,0.5) !important; }
+.pf-error { font-size: 0.7rem; color: #f87171; }
+
+.pf-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pf-select {
+  appearance: none;
+  padding-right: 30px;
+  cursor: pointer;
+}
+
+.pf-select option {
+  background: #0f1f3d;
+  color: #e2eaf8;
+}
+
+.pf-select-icon {
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
+  color: #4b6a9b;
+}
+
+/* ─── Modal Footer ────────────────────────── */
+.pm-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 1rem 1.5rem 1.25rem;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+
+.pm-cancel {
+  padding: 9px 18px;
+  background: none;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 0.84rem;
+  cursor: pointer;
+}
+
+.pm-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 20px;
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(59,130,246,0.3);
+}
+
+.pm-save:disabled,
+.pm-cancel:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.pm-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+/* ─── Delete modal ────────────────────────── */
+.pm-delete-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(248,113,113,0.1);
+  border: 1px solid rgba(248,113,113,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem auto 1rem;
+}
+
+.pm-delete-title {
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin: 0 0 8px;
+}
+
+.pm-delete-desc {
+  text-align: center;
+  font-size: 0.83rem;
+  color: var(--text-muted);
+  margin: 0 1.5rem 1.5rem;
+  line-height: 1.6;
+}
+
+.pm-delete-actions {
+  display: flex;
+  gap: 10px;
+  padding: 0 1.5rem 1.5rem;
+  justify-content: center;
+}
+
+.pm-delete-confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 20px;
+  background: linear-gradient(135deg, #b91c1c, #ef4444);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(239,68,68,0.3);
+}
+
+.pm-delete-confirm:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ─── Responsive ──────────────────────────── */
+@media (max-width: 700px) {
+  .pf-field.half { flex: 1 1 100%; }
+  .pts-table th:nth-child(n+4),
+  .pts-table td:nth-child(n+4) { display: none; }
+}

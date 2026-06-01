@@ -1,54 +1,49 @@
+// frontend/src/components/Login.js
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Eye, EyeOff, Activity, Lock, User, AlertCircle, ArrowLeft } from 'lucide-react';
+import { loginUser } from '../services/api';
 import './Login.css';
 
-// Comptes de démonstration (pour la soutenance)
-const DEMO_CREDENTIALS = [
-  { username: 'dr.martin', password: 'radio2024', name: 'Dr. Sophie Martin', role: 'Radiologue Senior' },
-  { username: 'dr.ahmed', password: 'radio2024', name: 'Dr. Karim Ahmed', role: 'Radiologue' },
-];
-
 export default function Login({ onLogin, onBack }) {
-  const [form, setForm] = useState({ username: '', password: '' });
+  const [form, setForm]               = useState({ username: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [error, setError]             = useState('');
+  const [loading, setLoading]         = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
-    
-    // Simulation d'appel API (délai pour l'effet visuel)
-    await new Promise(r => setTimeout(r, 800));
-    
-    const user = DEMO_CREDENTIALS.find(
-      u => u.username === form.username && u.password === form.password
-    );
-    
-    if (user) {
-      onLogin(user);
-    } else {
-      setError('Identifiants incorrects. Vérifiez votre nom d\'utilisateur et mot de passe.');
+
+    try {
+      const data = await loginUser(form.username.trim(), form.password.trim());
+      if (data.success) {
+        onLogin(data.user);
+      } else {
+        setError(data.error || 'Identifiants incorrects.');
+      }
+    } catch (err) {
+      setError(
+        err.response?.data?.error ||
+        'Erreur de connexion au serveur. Vérifiez que le backend est démarré.'
+      );
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
     <div className="login-page">
-      {/* Fond décoratif */}
       <div className="login-bg" />
       <div className="login-grid" />
 
-      {/* Carte de connexion */}
       <motion.div
         initial={{ opacity: 0, y: 32 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="login-card"
       >
-        {/* Bouton retour */}
         {onBack && (
           <button onClick={onBack} className="back-button">
             <ArrowLeft size={14} />
@@ -56,7 +51,6 @@ export default function Login({ onLogin, onBack }) {
           </button>
         )}
 
-        {/* Logo / Brand */}
         <div className="logo-area">
           <div className="logo-icon">
             <Activity size={28} color="#60a5fa" strokeWidth={2} />
@@ -72,7 +66,6 @@ export default function Login({ onLogin, onBack }) {
         <h2 className="heading">Connexion</h2>
         <p className="subheading">Accès réservé aux radiologues accrédités</p>
 
-        {/* Formulaire */}
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-field">
             <label className="form-label">Identifiant</label>
@@ -108,12 +101,13 @@ export default function Login({ onLogin, onBack }) {
                 onClick={() => setShowPassword(v => !v)}
                 className="eye-button"
               >
-                {showPassword ? <EyeOff size={16} color="#64748b" /> : <Eye size={16} color="#64748b" />}
+                {showPassword
+                  ? <EyeOff size={16} color="#64748b" />
+                  : <Eye    size={16} color="#64748b" />}
               </button>
             </div>
           </div>
 
-          {/* Message d'erreur */}
           {error && (
             <motion.div
               initial={{ opacity: 0, y: -8 }}
@@ -125,20 +119,11 @@ export default function Login({ onLogin, onBack }) {
             </motion.div>
           )}
 
-          {/* Bouton de connexion */}
           <button type="submit" className="login-button" disabled={loading}>
-            {loading ? (
-              <span className="spinner" />
-            ) : (
-              'Se connecter'
-            )}
+            {loading ? <span className="spinner" /> : 'Se connecter'}
           </button>
         </form>
-
-        
       </motion.div>
-
-      
     </div>
   );
 }

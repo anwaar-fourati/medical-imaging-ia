@@ -7,3 +7,6 @@ numpy
 matplotlib
 opencv-python-headless
 werkzeug
+psycopg2-binary
+bcrypt
+transformers

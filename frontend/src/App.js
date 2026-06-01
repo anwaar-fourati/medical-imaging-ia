@@ -1,10 +1,10 @@
+// frontend/src/App.js
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Landing from './components/Landing';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
-
-const SESSION_KEY = 'radioscan_user';
+import { getMe } from './services/api';
 
 const fade = {
   initial: { opacity: 0, filter: 'blur(6px)' },
@@ -14,30 +14,53 @@ const fade = {
 
 export default function App() {
   const [screen, setScreen] = useState('landing');
-  const [user, setUser] = useState(null);
+  const [user,   setUser]   = useState(null);
+  const [checking, setChecking] = useState(true);
 
-  // Restore session
+  // Vérifier si une session serveur est déjà active
   useEffect(() => {
-    try {
-      const saved = sessionStorage.getItem(SESSION_KEY);
-      if (saved) {
-        setUser(JSON.parse(saved));
-        setScreen('dashboard');
-      }
-    } catch {}
+    getMe()
+      .then(data => {
+        if (data.success) {
+          setUser(data.user);
+          setScreen('dashboard');
+        }
+      })
+      .catch(() => {}) // pas de session — on reste sur landing
+      .finally(() => setChecking(false));
   }, []);
 
   const handleLogin = (userData) => {
-    sessionStorage.setItem(SESSION_KEY, JSON.stringify(userData));
     setUser(userData);
     setScreen('dashboard');
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem(SESSION_KEY);
     setUser(null);
     setScreen('landing');
   };
+
+  if (checking) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#060d1f',
+      }}>
+        <div style={{
+          width: 36,
+          height: 36,
+          border: '3px solid rgba(255,255,255,0.1)',
+          borderTop: '3px solid #3b82f6',
+          borderRadius: '50%',
+          animation: 'spin 0.9s linear infinite',
+        }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
 
   return (
     <AnimatePresence mode="wait">
