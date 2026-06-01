@@ -1,7 +1,6 @@
-# backend/app.py
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import os, uuid, base64
+import os, uuid, base64, tempfile
 from werkzeug.utils import secure_filename
 import matplotlib
 matplotlib.use('Agg')
@@ -14,12 +13,9 @@ from model_utils import MedicalImageClassifier
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000", "http://127.0.0.1:3000"])
 
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
-RESULTS_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'results')
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(RESULTS_FOLDER, exist_ok=True)
+# ⚠️ PLUS BESOIN DE DOSSIERS STATIC
+# On va utiliser des fichiers temporaires qui seront automatiquement supprimés
 
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
@@ -53,6 +49,10 @@ def health():
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    # Utilisation d'un fichier temporaire qui sera automatiquement supprimé
+    temp_file = None
+    temp_path = None
+    
     try:
         if 'image' not in request.files:
             return jsonify({'success': False, 'error': 'Aucune image fournie'}), 400
@@ -62,24 +62,23 @@ def predict():
         if not allowed_file(file.filename):
             return jsonify({'success': False, 'error': 'Format non supporté. Utilisez JPG ou PNG'}), 400
 
-        filename = secure_filename(f"{uuid.uuid4().hex}_{file.filename}")
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
+        # Créer un fichier temporaire (sera supprimé automatiquement à la fermeture)
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as tmp:
+            file.save(tmp.name)
+            temp_path = tmp.name
+            temp_file = tmp
 
         # Gatekeeper CLIP
-        is_valid, info = classifier.gatekeeper.verify_image(filepath)
+        is_valid, info = classifier.gatekeeper.verify_image(temp_path)
         if not is_valid:
-            os.remove(filepath)
             return jsonify({'success': False, 'error': f"Image rejetée : {info}"}), 400
 
         # Prédiction
-        result = classifier.predict(filepath)
+        result = classifier.predict(temp_path)
 
-        # Grad-CAM — un seul panneau (prédiction uniquement)
-        gradcam_result = classifier.predict_with_gradcam(filepath)
+        # Grad-CAM
+        gradcam_result = classifier.predict_with_gradcam(temp_path)
         gradcam_image = generate_gradcam_image(gradcam_result)
-
-        os.remove(filepath)
 
         return jsonify({
             'success': True,
@@ -88,13 +87,19 @@ def predict():
             'confidence': result['confidence'],
             'all_probabilities': result['all_probabilities'],
             'color': result['color'],
-            'gradcam': gradcam_image,   # image unique : original + heatmap superposée
+            'gradcam': gradcam_image,
         })
 
     except Exception as e:
-        if 'filepath' in locals() and os.path.exists(filepath):
-            os.remove(filepath)
         return jsonify({'success': False, 'error': f"Erreur interne : {str(e)}"}), 500
+    
+    finally:
+        # Nettoyage : suppression du fichier temporaire
+        if temp_path and os.path.exists(temp_path):
+            try:
+                os.unlink(temp_path)
+            except:
+                pass
 
 if __name__ == '__main__':
     print("\n" + "="*50)
@@ -103,5 +108,6 @@ if __name__ == '__main__':
     print(f"📁 Modèle : {MODEL_PATH}")
     print(f"🌐 URL    : http://localhost:5000")
     print(f"🔗 Route  : POST /predict")
+    print("💾 Aucune image sauvegardée sur disque (fichiers temporaires)")
     print("="*50 + "\n")
     app.run(host='0.0.0.0', port=5000, debug=False)
