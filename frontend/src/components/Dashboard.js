@@ -9,12 +9,11 @@ import {
   Clock, Stethoscope, Check, Loader
 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
-import { predictImage, getPatients, logoutUser } from '../services/api';
+import { predictImage, getPatients, logoutUser,  verifyImage  } from '../services/api';
 import { generatePDF } from '../utils/generatePDF';
 import Patients from './Patients';
 import Historique from './Historique';
 import './Dashboard.css';
-
 // ─── Méta classes ─────────────────────────────────────────────────────────────
 const CLASS_META = {
   covid:     { label: 'COVID-19',  color: '#f87171', bg: 'rgba(248,113,113,0.1)',  border: 'rgba(248,113,113,0.3)'  },
@@ -116,7 +115,7 @@ function PatientSelector({ onSelect, onCancel }) {
         <Search size={14} color="#4b6a9b" className="ps-search-icon" />
         <input
           className="ps-search"
-          placeholder="Rechercher par nom, prénom ou CIN…"
+          placeholder="Rechercher par nom, prénom ou CIN"
           value={search}
           onChange={e => setSearch(e.target.value)}
           autoFocus
@@ -337,27 +336,34 @@ export default function Dashboard({ user, onLogout }) {
 
   // ── Drop ──────────────────────────────────────────────────────────────────
   const onDrop = useCallback(async (acceptedFiles) => {
-    const file = acceptedFiles[0];
-    if (!file) return;
+  const file = acceptedFiles[0];
+  if (!file) return;
 
-    // Preview immédiate
-    const reader = new FileReader();
-    reader.onloadend = () => setPreview(reader.result);
-    reader.readAsDataURL(file);
+  // Preview immédiate
+  const reader = new FileReader();
+  reader.onloadend = () => setPreview(reader.result);
+  reader.readAsDataURL(file);
 
-    setPendingFile(file);
-    setVerifying(true);
+  setPendingFile(file);
+  setVerifying(true);
 
-    // On appelle le backend juste pour la validation CLIP
-    // (la vraie prédiction se fera après sélection patient)
-    // Pour simplifier : on pré-valide via un appel minimal
-    // En pratique on peut juste vérifier côté client que c'est une image
-    // et déléguer la validation CLIP au moment du predict.
-    // Ici on passe directement à select-patient pour ne pas
-    // envoyer l'image deux fois.
+  try {
+    const data = await verifyImage(file);
+    if (data.success) {
+      setStep('select-patient');
+    } else {
+      toast.error(data.error || 'Image rejetée');
+      setPreview(null);
+      setPendingFile(null);
+    }
+  } catch (err) {
+    toast.error(err.message || "Erreur lors de la vérification de l'image");
+    setPreview(null);
+    setPendingFile(null);
+  } finally {
     setVerifying(false);
-    setStep('select-patient');
-  }, []);
+  }
+}, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

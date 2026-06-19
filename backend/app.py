@@ -301,7 +301,40 @@ def get_analyse(aid):
             item[k] = item[k].isoformat() if hasattr(item[k], 'isoformat') else str(item[k])
     return jsonify({'success': True, 'analyse': item})
 
+# ─── Vérification CLIP (avant sélection du patient) ───────────────────────────
+@app.route('/verify-image', methods=['POST'])
+@login_required
+def verify_image():
+    temp_path = None
+    try:
+        if 'image' not in request.files:
+            return jsonify({'success': False, 'error': 'Aucune image fournie'}), 400
 
+        file = request.files['image']
+        if file.filename == '':
+            return jsonify({'success': False, 'error': 'Nom de fichier vide'}), 400
+        if not allowed_file(file.filename):
+            return jsonify({'success': False, 'error': 'Format non supporté. Utilisez JPG ou PNG'}), 400
+
+        suffix = '.png' if file.filename.lower().endswith('.png') else '.jpg'
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+            file.save(tmp.name)
+            temp_path = tmp.name
+
+        is_valid, info = classifier.gatekeeper.verify_image(temp_path)
+        if not is_valid:
+            return jsonify({'success': False, 'error': f"Image rejetée : {info}"}), 400
+
+        return jsonify({'success': True})
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': f"Erreur interne : {str(e)}"}), 500
+    finally:
+        if temp_path and os.path.exists(temp_path):
+            try:
+                os.unlink(temp_path)
+            except Exception:
+                pass
 # ─── Prédiction ───────────────────────────────────────────────────────────────
 @app.route('/predict', methods=['POST'])
 @login_required

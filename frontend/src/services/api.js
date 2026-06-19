@@ -76,7 +76,23 @@ export const updateComment = async (id, comment) => {
   const { data } = await api.patch(`/analyses/${id}/comment`, { comment });
   return data;
 };
+// ─── Vérification CLIP ───────────────────────────────────────────────────
+export const verifyImage = async (file) => {
+  const formData = new FormData();
+  formData.append('image', file);
 
+  try {
+    const { data } = await api.post('/verify-image', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return data;
+  } catch (error) {
+    if (error.response?.data?.error) {
+      throw new Error(error.response.data.error);
+    }
+    throw new Error('Erreur de connexion au serveur');
+  }
+};
 // ─── Prédiction ────────────────────────────────────────────────────────────
 export const predictImage = async (file, patientId, comment = '') => {
   const formData = new FormData();

@@ -258,7 +258,7 @@ export default function Patients() {
         <Search size={15} color="#4b6a9b" className="pts-search-icon" />
         <input
           className="pts-search-input"
-          placeholder="Rechercher par nom, prénom ou CIN…"
+          placeholder="Rechercher par nom, prénom ou CIN"
           value={search}
           onChange={e => setSearch(e.target.value)}
         />

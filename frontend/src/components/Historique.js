@@ -64,7 +64,7 @@ export default function Historique({ onViewAnalyse }) {
         <Search size={15} color="#4b6a9b" className="hist-search-icon" />
         <input
           className="hist-search-input"
-          placeholder="Rechercher par patient, CIN, diagnostic…"
+          placeholder="Rechercher par patient, CIN, diagnostic"
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
