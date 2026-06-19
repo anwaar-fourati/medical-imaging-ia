@@ -514,10 +514,7 @@ export default function Dashboard({ user, onLogout }) {
                         <span className="tag tag-secondary">Max 16 MB</span>
                       </div>
                     </div>
-                    <div className="info-bar">
-                      <span>⚡</span>
-                      <span>Filtrage automatique CLIP — images non-thoraciques rejetées</span>
-                    </div>
+                    
                   </motion.div>
                 )}
 
