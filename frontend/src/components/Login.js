@@ -74,7 +74,7 @@ export default function Login({ onLogin, onBack }) {
               <input
                 className="form-input"
                 type="text"
-                placeholder="dr.martin"
+                placeholder=""
                 value={form.username}
                 onChange={e => setForm({ ...form, username: e.target.value })}
                 required
@@ -90,7 +90,7 @@ export default function Login({ onLogin, onBack }) {
               <input
                 className="form-input password-input"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="••••••••"
+                placeholder=""
                 value={form.password}
                 onChange={e => setForm({ ...form, password: e.target.value })}
                 required
